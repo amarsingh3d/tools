@@ -1,0 +1,4 @@
+#!/bin/bash
+dom=$1
+echo "Testing redirect service for $dom"
+curl -v --header "Host: $dom" http://67.221.166.57/
