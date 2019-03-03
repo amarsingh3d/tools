@@ -1,0 +1,4 @@
+echo "Checking DNS records for $1"
+dig +noall +answer $1
+echo "<End>"
+
