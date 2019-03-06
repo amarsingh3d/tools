@@ -1,0 +1,6 @@
+#!/bin/bash
+echo "Attempting to access $1 with user $2 and password --REDACTED--"
+wget --user=$2 --password=$3 $1
+echo "<End>"
+rm -rf index*
+
