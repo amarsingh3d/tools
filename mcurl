@@ -1,0 +1,42 @@
+#!/bin/bash
+version=0.1
+
+if [ $1 == 'version' ]; then
+   echo "========================================================="
+   echo "mcurl version $version written and developed by Graham Trueman"
+   exit 1;	
+fi
+
+if [ $1 == 'help' ]; then
+   echo "Usage: mcurl url (string) loops (integer <=100) options"
+   echo ""
+   echo "The url will be requested outside of a browser x times, where x is the loop value entered."
+   echo "The size of the file received will be logged in order that consistency can be verified"
+   echo ""
+   echo "Options: silent (default). Other options may be added at a later date."
+
+   exit 1;
+fi
+
+if [ -z $1 ]; then
+   echo "you didn't enter any values"
+   echo "mcurl help for syntax assistance"
+   exit 1;
+fi
+
+if [ -z $2 ]; then
+   echo "you didn't the correct number of values"
+   echo "mcurl help for syntax assistance"
+   exit 1;
+fi
+
+   echo "running the multi-curl loop for $1 over $2 attempts"
+   lp="for i in {1..$2}; "
+   da='do echo -ne "Attempt $i..." ; '
+   ct="content=\`curl -s "
+   cu='` ; len=${#content} ; echo "length $len"; done'
+   out=$lp$da$ct$1$cu
+   echo "---"
+   echo $out
+   eval $out
+
