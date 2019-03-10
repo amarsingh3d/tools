@@ -1,4 +1,28 @@
 #!/bin/bash
+# VARS #
+version=1.0.1
+
+# NULL INPUT CAPTURE #
+if [ -z $1 ]; then
+   echo "You don't appear to have entered a value for the fqdn"
+   echo "use 'test-redirect help' for syntax assistance"
+   exit 1;
+fi
+
+#HELP #
+if [ $1 == 'help' ]; then
+   clear
+   echo "=================="
+   echo "Test redirect tool"
+   echo "=================="
+   echo ""
+   echo "Syntax:	 test-redirect fqdn"
+   echo ""
+   echo "This command traces the path of a domain through the Crownpeak apex redirect service."
+   echo "In order to have this work, the redirect must exist inside the services, so the tool is not of much use to sites that are not managed by Crownpeak - sorry!"
+   exit 1;
+fi
+
 dom=$1
 echo "Testing redirect service for $dom"
 curl -v --header "Host: $dom" http://67.221.166.57/
