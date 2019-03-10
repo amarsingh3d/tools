@@ -1,6 +1,134 @@
 #!/bin/bash
+# VARS #
+version=1.0.1
+array=($(ls -d *))
 wd=$PWD
-echo "Add link for $1 to your /usr/bin directory"
-echo "Your working directory is $wd"
-ln -s $wd/$1 /usr/bin/$1
-echo "Added."
+
+# NULL INPUT CAPTURE #
+if [ -z $1 ]; then
+   echo "You don't appear to have entered any values"
+   echo "use 'add-tool help' for syntax assistance"
+   exit 1;
+fi
+
+# ABOUT #
+if [ $1 == 'version' ]; then
+   echo "===================================================================="
+   echo "'add-tools' version $version written and developed by Graham Trueman"
+   echo "===================================================================="
+   exit 1;
+fi
+
+# HELP #
+if [ $1 == 'help' ]; then
+	clear
+	echo "Installing the add-tools tool"
+	echo "============================="
+	echo ""
+	echo "When adding the tool for the first time, you will need to install add-tools by calling itself, e.g"
+        echo ""
+	echo "	   ./add-tools add-tools "
+	echo ""
+	echo "Once installed, add-tools will be a recognized command on your local system. From here on, the syntax is simple and is described below"
+	echo ""
+  echo "=========================="
+	echo "Using the add-tool command"
+	echo "=========================="
+	echo "Usage/syntax: add-tool foo"
+	echo ""
+	echo "The add-tool command will install the tool entered at 'foo', providing it is included in the checked out repo"
+	echo "This is done by referencing the file in your local checkout of the tools repository, from the system's /usr/bin"
+	echo "Once installed, 'foo' becomes a recognized local command, and can be run from anywhere."
+	echo ""
+	echo "======================="
+	echo "Full Syntax and Options"
+	echo "======================="
+	echo ""
+	echo "add-tools help - shows this help page."
+	echo "add-tools version - provides information about this script."
+	echo "add-tools foo - installs foo where this is a valid script contained in the locally checked out repository."
+	echo "add-tools all - will attempt to install all available scripts from the locally checked out repository."
+	echo "add-tools list - provides a list of the available tools in the current repository that you have checked out"
+	echo "add-tools remove foo - will remove the foo symbolic link from your system."
+	echo ""
+  echo ""
+	echo "====="
+	echo "Notes"
+	echo "====="
+	echo "Removing the repository will break the softlink and remove the capability to use the tools."
+	echo ""
+	echo "Once you have the tools repo checked out, you can update at any time using 'git pull' to bring in any script modifications, and bring in any new scripts"
+	echo ""
+	echo "Non developers should work from the 'master' branch"
+	echo ""
+	echo "-End-"
+  echo ""
+   exit 1;
+fi
+
+# LIST #
+if [ $1 == 'list' ]; then
+	echo "The following tools can be installed with this version"
+	for TOOL in ${array[@]}
+	do
+		if [ $TOOL != 'README.md' ]; then
+		echo $TOOL
+		fi
+	done
+  exit 1;
+fi
+
+# INSTALL ALL #
+if [ $1 == 'all' ]; then
+        echo "Attempting to install all tools"
+        for TOOL in ${array[@]}
+        do
+                if [ $TOOL != 'README.md' ]; then
+                	if [ -L /usr/bin/$TOOL ]; then
+        			echo "Softlink already exists at /usr/bin/$TOOL"
+			else
+        			echo "Add link for $TOOL to your /usr/bin directory"
+        			ln -s $wd/$TOOL /usr/bin/$TOOL
+			fi
+                fi
+        done
+	echo "Task complete."
+  exit 1;
+fi
+
+# REMOVE REFERENCE TO A TOOL #
+validation=0;
+if [ $1 == 'remove' ]; then
+	if [ -z $2 ]; then
+   	echo "No tool to remove"
+	else
+
+	for TOOL in ${array[@]}
+		do
+			if [ $TOOL == $2 ]; then
+               		validation=1
+      			fi
+		done
+		if [ $validation == 1 ]; then
+			echo "remove $2"
+			rm -f /usr/bin/$2
+		else
+			echo "No valid link found"
+		exit 1;
+		fi
+	fi
+  exit 1;
+fi
+
+# INSTALL INDIVIDUAL TOOL #
+if [ -L /usr/bin/$1 ]; then
+	echo "Softlink already exists at /usr/bin/$1"
+else
+	echo "Add link for $1 to your /usr/bin directory"
+	echo "Your working directory is $wd"
+	ln -s $wd/$1 /usr/bin/$1
+	echo "======"
+	echo "Added."
+	echo "======"
+fi
+
