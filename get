@@ -1,6 +1,72 @@
 #!/bin/bash
-echo "Attempting to access $1 with user $2 and password --REDACTED--"
-wget --user=$2 --password=$3 $1
-echo "<End>"
-rm -rf index*
+
+# VARS #
+version=1.0.1
+
+# NULL INPUT CAPTURE #
+if [ -z $1 ]; then
+   echo "You don't appear to have entered a value for the fqdn"
+   echo "use 'get help' for syntax assistance"
+   exit 1;
+fi
+
+# ABOUT #
+if [ $1 == 'version' ]; then
+   echo "==========================================================="
+   echo "'get' version $version written and developed by Graham Trueman"
+   echo "==========================================================="
+   exit 1;
+fi
+
+#HELP #
+if [ $1 == 'help' ]; then
+   clear
+   echo "========"
+   echo "GET tool"
+   echo "========"
+   echo ""
+   echo "Syntax: 	get URL foo bar [options]"
+   echo ""
+   echo ""
+   echo "This script allows for the validation of a set of credentials where a URL has basic 401 auth enabled. Replace 'foo' with a valid username and 'bar' with your credentials to view the output."
+   echo ""
+   echo "The output contains the URL, username, the redacted password, headers response, and the saved file lenght details."
+   echo "By default, the downloaded file is removed, providing it is called 'index*'"
+   echo ""
+   echo "========"
+   echo "Options:"
+   echo "========"
+   echo "Add the 'nocheck' flag to append the '--no-check-certificate' to the command, which may be needed where a certificate mis-match is found."
+   echo ""
+   exit 1;
+fi
+
+# ADDITIONAL INPUT MISSING CAPTURE #
+
+if [ -z $2 ]; then
+   echo "You don't appear to have entered a username"
+   echo "use 'get help' for syntax assistance"
+   exit 1;
+fi
+
+if [ -z $3 ]; then
+   echo "You don't appear to have entered a value for the password"
+   echo "use 'get help' for syntax assistance"
+   exit 1;
+fi
+
+# SCRIPT #
+
+if [ -z $4 ]; then
+  	echo "Attempting to access $1 with user $2 and password --REDACTED--"
+	wget --user=$2 --password=$3 $1
+else
+	if [ $4 == 'nocheck' ]; then
+		echo "Attempting to access $1 with user $2 and password --REDACTED--"
+        wget --user=$2 --password=$3 $1 --no-check-certificate
+	fi
+
+	echo "<End>"
+	rm -rf index*
+fi
 
