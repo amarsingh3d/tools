@@ -1,7 +1,12 @@
 #!/bin/bash
 
 # VARS #
-version=1.0.1
+version=1.1.0
+modified=29/Mar/2019
+location=/tmp/get-output
+
+# CREATE TEMP DIR #
+mkdir -p $location
 
 # NULL INPUT CAPTURE #
 if [ -z $1 ]; then
@@ -18,7 +23,7 @@ if [ $1 == 'version' ]; then
    exit 1;
 fi
 
-#HELP #
+# HELP #
 if [ $1 == 'help' ]; then
    clear
    echo "========"
@@ -37,8 +42,24 @@ if [ $1 == 'help' ]; then
    echo "Options:"
    echo "========"
    echo "Add the 'nocheck' flag to append the '--no-check-certificate' to the command, which may be needed where a certificate mis-match is found."
+   echo "Add 'keep' to the end of your query to keep the downloaded output in the default directory ($location)"
+   echo ""
+   echo "You can cleanup leftover files using 'get clean'"
+   echo ""
+   echo ""
+   echo "=========================="
+   echo "'get' version: $version"
+   echo "Last modified: $modified"
+   echo "=========================="
    echo ""
    exit 1;
+fi
+
+# CLEAN DIRECTORY #
+if [ $1 == 'clean' ] ; then
+  echo "Cleaning leftover files from previous script execution."
+  rm -f $location/*
+  exit 1;
 fi
 
 # ADDITIONAL INPUT MISSING CAPTURE #
@@ -57,16 +78,23 @@ fi
 
 # SCRIPT #
 
-if [ -z $4 ]; then
+if [[ -z $4 ]] || [[ $4 == 'keep' ]]; then
   	echo "Attempting to access $1 with user $2 and password --REDACTED--"
-	wget --user=$2 --password=$3 $1
+    wget --user=$2 --password=$3 $1 -P $location/
 else
 	if [ $4 == 'nocheck' ]; then
 		echo "Attempting to access $1 with user $2 and password --REDACTED--"
-        wget --user=$2 --password=$3 $1 --no-check-certificate
+    wget --user=$2 --password=$3 $1 --no-check-certificate -P $location/
 	fi
-
-	echo "<End>"
-	rm -rf index*
+echo "<End>"
 fi
 
+# CLEANUP OPTION #
+if [[ $4 == 'keep' ]] || [[ $5 == 'keep' ]] ; then
+  echo "Files will remain in the /tmp/get-output directory, and will need to be manually removed"
+  exit 1;
+else
+  echo "Downloaded files have been automatically removed"
+  rm -f $location/*
+  exit 1;
+fi
