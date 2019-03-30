@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # VARS #
-version=1.1.0
-modified=29/Mar/2019
+version=1.1.1
+modified=30/Mar/2019
 location=/tmp/get-output
 
 # CREATE TEMP DIR #
@@ -30,21 +30,19 @@ if [ $1 == 'help' ]; then
    echo "GET tool"
    echo "========"
    echo ""
-   echo "Syntax: 	get URL foo bar [options]"
+   echo "Syntax: 	get URL username password [options]"
    echo ""
    echo ""
-   echo "This script allows for the validation of a set of credentials where a URL has basic 401 auth enabled. Replace 'foo' with a valid username and 'bar' with your credentials to view the output."
+   echo "This script validates a set of credentials against a URL has basic 401 auth enabled."
    echo ""
-   echo "The output contains the URL, username, the redacted password, headers response, and the saved file lenght details."
-   echo "By default, the downloaded file is removed, providing it is called 'index*'"
+   echo "The output contains the URL, username, the redacted password, headers response, and the saved file length details."
    echo ""
    echo "========"
    echo "Options:"
    echo "========"
-   echo "Add the 'nocheck' flag to append the '--no-check-certificate' to the command, which may be needed where a certificate mis-match is found."
-   echo "Add 'keep' to the end of your query to keep the downloaded output in the default directory ($location)"
-   echo ""
-   echo "You can cleanup leftover files using 'get clean'"
+   echo "'nocheck' - Appends the '--no-check-certificate' to the command, which may be needed where a certificate mis-match is found."
+   echo "'keep'    - The downloaded output is stored in the default directory ($location)"
+   echo "'clean'   - Used as a command with no other parameters, e.g 'get clean' to cleanup leftover files in $location"
    echo ""
    echo ""
    echo "=========================="
