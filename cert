@@ -1,0 +1,124 @@
+#!/bin/bash
+version=0.1
+modified=04/Apr/2019
+
+# Version details #
+if [ $1 == 'version' ]; then
+   echo "========================================================="
+   echo "cert version $version written and developed by Graham Trueman"
+   echo "last modified ${modified}"
+   exit 1;
+fi
+
+# Help #
+if [ $1 == 'help' ]; then
+   echo "================"
+   echo "Certificate tool"
+   echo "================"
+   echo ""
+   echo "This tool has been developed to assist in creation and conversion of many different types of certificate files."
+   echo ""
+   echo ""
+   echo "Usage: cert option(s)"
+   echo ""
+   echo "CSR Verification"
+   echo "================"
+   echo ""
+   echo "Syntax: cert csr file.csr [option]"
+   echo "        - verifies the content of a CSR"
+   echo ""
+   echo "        Options"
+   echo "        full   : include the CSR body at the end of the printed results."
+   echo ""
+   echo "PFX Extraction"
+   echo "=============="
+   echo ""
+   echo "Syntax: cert pfx file.pfx [option]"
+   echo "        - extracts data from .pfx (will require password if one has been set.)"
+   echo ""
+   echo "        Options"
+   echo "        cer    : extracts the certificate to 'certificate.cer'"
+   echo "        key    : extracts the encrypted private key to 'key.pem'"
+   echo "        int    : extracts all certificates, including intermediates, to 'chain.txt'"
+   echo ""
+   echo "Decrypting private keys"
+   echo "======================="
+   echo ""
+   echo "Syntax: cert decrypt key.pem"
+   echo "        - decrypts a private key and saves to 'decrypted-private.key'"
+   echo ""
+   echo "==========================="
+   echo "'cert' version: $version"
+   echo "Last modified : $modified"
+   echo "==========================="
+   echo ""
+
+   exit 1;
+fi
+
+# No options entered #
+if [ -z $1 ]; then
+   echo "you didn't enter any values"
+   echo "cert help for syntax assistance"
+   exit 1;
+fi
+
+# CSR Checking #
+if [ $1 == 'csr' ]; then
+   if [ -z $2 ]; then
+     echo 'Please enter a path and filename for your csr'
+     exit 1;
+  fi
+  echo "Checking CSR at $2"
+  openssl req -text -noout -verify -in $2
+  if [ $3 == 'full' ]; then
+    echo ""
+    echo "========"
+    echo "CSR body"
+    echo "========"
+    more $2
+  fi
+  exit 1;
+fi
+
+# PFX Extraction tools#
+if [ $1 == 'pfx' ]; then
+   if [ -z $2 ]; then
+     echo "Please enter a path and filename for your pfx"
+     exit 1;
+  fi
+   if [ $3 == 'cer' ]; then
+      rm certificate.cer
+      echo "Extracting the certificate from $2"
+      openssl pkcs12 -in $2 -clcerts -nokeys -out certificate.cer
+      exit 1;
+  fi
+  if [ $3 == 'key' ]; then
+     rm certificate.cer
+     echo "Extracting the private key from $2"
+     openssl pkcs12 -in $2 -nocerts -out key.pem
+     exit 1;
+  fi
+  if [ $3 == 'int' ]; then
+     rm chain.txt
+     echo "Extracting the intermediate chain from $2"
+     openssl pkcs12 -in $2 -out chain.txt -nodes
+     exit 1;
+  fi
+     echo "Syntax: cert pfx file.pfx (cer|key|int)"
+     echo "cer = certificate, key = private key, int = intermediate chain certificates"
+     exit 1;
+fi
+
+# Decrypt private key#
+if [ $1 == 'decrypt' ]; then
+   if [ -z $2 ]; then
+     echo "Please enter a path and filename for your encrypted private key"
+     exit 1;
+  fi
+  echo "Decrypting private key $2"
+  rm -f decrypted-private.key
+  openssl rsa -in $2 -out decrypted-private.key
+fi
+
+echo "<End>"
