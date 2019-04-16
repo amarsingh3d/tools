@@ -1,9 +1,9 @@
 #!/bin/bash
-version=0.1
-modified=04/Apr/2019
+version=1.0
+modified=16/Apr/2019
 
 # Version details #
-if [ $1 == 'version' ]; then
+if [[ $1 == 'version' ]]; then
    echo "========================================================="
    echo "cert version $version written and developed by Graham Trueman"
    echo "last modified ${modified}"
@@ -11,7 +11,7 @@ if [ $1 == 'version' ]; then
 fi
 
 # Help #
-if [ $1 == 'help' ]; then
+if [[ $1 == 'help' ]]; then
    echo "================"
    echo "Certificate tool"
    echo "================"
@@ -58,20 +58,20 @@ fi
 
 # No options entered #
 if [ -z $1 ]; then
-   echo "you didn't enter any values"
-   echo "cert help for syntax assistance"
+   echo "You didn't enter any values"
+   echo "See cert help for syntax assistance"
    exit 1;
 fi
 
 # CSR Checking #
-if [ $1 == 'csr' ]; then
+if [[ $1 == 'csr' ]]; then
    if [ -z $2 ]; then
      echo 'Please enter a path and filename for your csr'
      exit 1;
   fi
   echo "Checking CSR at $2"
   openssl req -text -noout -verify -in $2
-  if [ $3 == 'full' ]; then
+  if [[ $3 == 'full' ]]; then
     echo ""
     echo "========"
     echo "CSR body"
@@ -82,24 +82,24 @@ if [ $1 == 'csr' ]; then
 fi
 
 # PFX Extraction tools#
-if [ $1 == 'pfx' ]; then
+if [[ $1 == 'pfx' ]]; then
    if [ -z $2 ]; then
      echo "Please enter a path and filename for your pfx"
      exit 1;
   fi
-   if [ $3 == 'cer' ]; then
+   if [[ $3 == 'cer' ]]; then
       rm certificate.cer
       echo "Extracting the certificate from $2"
       openssl pkcs12 -in $2 -clcerts -nokeys -out certificate.cer
       exit 1;
   fi
-  if [ $3 == 'key' ]; then
+  if [[ $3 == 'key' ]]; then
      rm certificate.cer
      echo "Extracting the private key from $2"
      openssl pkcs12 -in $2 -nocerts -out key.pem
      exit 1;
   fi
-  if [ $3 == 'int' ]; then
+  if [[ $3 == 'int' ]]; then
      rm chain.txt
      echo "Extracting the intermediate chain from $2"
      openssl pkcs12 -in $2 -out chain.txt -nodes
@@ -111,7 +111,7 @@ if [ $1 == 'pfx' ]; then
 fi
 
 # Decrypt private key#
-if [ $1 == 'decrypt' ]; then
+if [[ $1 == 'decrypt' ]]; then
    if [ -z $2 ]; then
      echo "Please enter a path and filename for your encrypted private key"
      exit 1;
