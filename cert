@@ -1,6 +1,6 @@
 #!/bin/bash
 version=1.0
-modified=16/Apr/2019
+modified=03/Oct/2019
 
 # Version details #
 if [[ $1 == 'version' ]]; then
