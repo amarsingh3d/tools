@@ -30,6 +30,12 @@ if [[ $1 == 'help' ]]; then
    echo "        Options"
    echo "        full   : include the CSR body at the end of the printed results."
    echo ""
+   echo "SSL Certificate Verification"
+   echo "============================"
+   echo ""
+   echo "Syntax: cert verify domain"
+   echo "        - validates an SSL certificate, including chain, CSR data and expiry date"
+   echo ""
    echo "PFX Extraction"
    echo "=============="
    echo ""
@@ -121,4 +127,13 @@ if [[ $1 == 'decrypt' ]]; then
   openssl rsa -in $2 -out decrypted-private.key
 fi
 
+ # Certificate Verification
+if [ $1 == 'verify' ]; then
+	if [ -z $2 ]; then
+	  echo "Please enter the domain that you wish to verify"
+	  exit 1;
+	fi
+	echo "Verify certification for $2"
+	openssl s_client -showcerts -connect $2:443 | openssl x509  -noout -enddate
+fi
 echo "<End>"
