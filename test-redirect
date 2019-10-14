@@ -1,6 +1,7 @@
 #!/bin/bash
 # VARS #
-version=1.0.1
+version=1.0.2
+modified=14/Oct/2019
 
 # NULL INPUT CAPTURE #
 if [ -z $1 ]; then
@@ -12,17 +13,31 @@ fi
 #HELP #
 if [ $1 == 'help' ]; then
    clear
-   echo "=================="
+   echo "==========================="
    echo "Test redirect tool"
-   echo "=================="
+   echo "Version       : $version"
+   echo "Last modified : $modified"
+   echo "==========================="
    echo ""
    echo "Syntax:	 test-redirect fqdn"
    echo ""
    echo "This command traces the path of a domain through the Crownpeak apex redirect service."
    echo "In order to have this work, the redirect must exist inside the services, so the tool is not of much use to sites that are not managed by Crownpeak - sorry!"
+   echo ""
    exit 1;
 fi
 
-dom=$1
-echo "Testing redirect service for $dom"
-curl -v --header "Host: $dom" http://67.221.166.57/
+if [ $2 == 'old' ]; then
+# Old redirect
+	dom=$1
+	echo "Testing redirect service for $dom using old service"
+	curl -v --header "Host: $dom" http://67.221.166.57/
+	echo "<End>"
+	exit 1;
+fi
+
+# New redirect
+	dom=$1
+	echo "Testing redirect service for $dom"
+	curl -v --header "Host: $dom" redirect.crownpeak.net
+	echo "<End>"
