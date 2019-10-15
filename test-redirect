@@ -27,6 +27,15 @@ if [ $1 == 'help' ]; then
    exit 1;
 fi
 
+# New redirect
+if [ -z $2 ]; then
+	dom=$1
+	echo "Testing redirect service for $dom"
+	curl -v --header "Host: $dom" redirect.crownpeak.net
+	echo "<End>"
+  exit 1;
+fi
+
 if [ $2 == 'old' ]; then
 # Old redirect
 	dom=$1
@@ -36,8 +45,4 @@ if [ $2 == 'old' ]; then
 	exit 1;
 fi
 
-# New redirect
-	dom=$1
-	echo "Testing redirect service for $dom"
-	curl -v --header "Host: $dom" redirect.crownpeak.net
-	echo "<End>"
+echo "Unexpected value"
