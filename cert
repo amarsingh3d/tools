@@ -1,6 +1,6 @@
 #!/bin/bash
-version=1.0
-modified=03/Oct/2019
+version=1.1
+modified=03/Feb/2020
 
 # Version details #
 if [ $1 == 'version' ]; then
@@ -46,6 +46,15 @@ if [ $1 == 'help' ]; then
    echo "        cer    : extracts the certificate to 'certificate.cer'"
    echo "        key    : extracts the encrypted private key to 'key.pem'"
    echo "        int    : extracts all certificates, including intermediates, to 'chain.txt'"
+   echo ""
+   echo "P7b Extraction"
+   echo "=============="
+   echo ""
+   echo "Syntax: cert p7b file.p7b [option]"
+   echo "        - extracts data from .p7b (includes all root and chain cert data, if present.)"
+   echo ""
+   echo "        Options"
+   echo "        cer    : extracts all certificate to 'certificate.cer'"
    echo ""
    echo "Decrypting private keys"
    echo "======================="
@@ -114,6 +123,18 @@ if [ $1 == 'pfx' ]; then
      echo "Syntax: cert pfx file.pfx (cer|key|int)"
      echo "cer = certificate, key = private key, int = intermediate chain certificates"
      exit 1;
+fi
+
+# P7B Extraction tools#
+if [ $1 == 'p7b' ]; then
+   if [ -z $2 ]; then
+     echo "Please enter a path and filename for your p7b"
+     exit 1;
+  fi
+      rm certificate.cer
+      echo "Extracting all certificate content from $2 to certificate.cer"
+      openssl pkcs7 -print_certs -in $2 -out certificate.cer
+      exit 1;
 fi
 
 # Decrypt private key#
