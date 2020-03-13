@@ -1,5 +1,5 @@
 #!/bin/bash
-version=1.2
+version=1.2.1
 modified=13/March/2020
 
 # Version details #
@@ -126,20 +126,12 @@ if [ "$1" == 'pfx' ]; then
       exit 1;
    fi
    if [ "$3" == "cer" ]; then
-
-if [[ $1 == 'pfx' ]]; then
-   if [ -z $2 ]; then
-     echo "Please enter a path and filename for your pfx"
-     exit 1;
-  fi
-   if [[ $3 == 'cer' ]]; then
       rm certificate.cer
       echo "Extracting the certificate from $2"
       openssl pkcs12 -in $2 -clcerts -nokeys -out certificate.cer
       exit 1;
   fi
   if [ "$3" == 'key' ]; then
-
      rm certificate.cer
      echo "Extracting the private key from $2"
      openssl pkcs12 -in $2 -nocerts -out key.pem
