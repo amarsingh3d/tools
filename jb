@@ -1,0 +1,94 @@
+#!/bin/bash
+# VARS #
+version=1.0.1
+modified=26/July/2020
+
+mboxes=38 # Can edit the number of M boxes here
+pkey="/auth/keys/master-vpc-keypair-us-east-1.pem"
+
+# NULL INPUT CAPTURE #
+if [ -z $1 ]; then
+   echo "Missing option - nothing to execute"
+   echo "Usage: jb (start|stop|restart|list|version|help)"
+   exit 1;
+fi
+
+# ABOUT #
+if [ $1 == 'version' ]; then
+   echo "============================================================="
+   echo "jb version $version written and developed by Graham Trueman"
+   echo "last modified: ${modified}"
+   echo "============================================================="
+   exit 1;
+fi
+
+# JBOSS LOOP LIST #
+if [ $1 == 'list' ]; then
+	i="0"
+	echo "Listing jboss backend service state"
+	while [ $i -lt $mboxes ]
+	do
+		i=$[$i+1]
+		echo && echo "============"; echo "Checking m$i"; echo "============"; ssh -o StrictHostKeyChecking=no -i /auth/keys/master-vpc-keypair-us-east-1.pem root@m$i.jam.maguscloud.com 'ls -ld /jboss/standalone/deployments/*.*ed' | awk '{print $9}'
+	done
+	echo "Front end servers and API's"
+	for i in {1..5}; do echo && echo "==========="; echo "Checking c$i"; echo "==========="; ssh -o StrictHostKeyChecking=no -i /auth/keys/master-vpc-keypair-us-east-1.pem root@c$i.jam.maguscloud.com 'ls -ld /jboss/standalone/deployments/*.*ed' | awk '{print $9}' ; done
+fi
+
+# JBOSS STOP
+if [ $1 == 'stop' ]; then
+        i="1"
+	echo "Stopping all jboss backend services (not M1)"
+        while [ $i -lt $mboxes ]
+        do
+                i=$[$i+1]
+                echo && echo "============"; echo "Stopping m$i"; echo "============"; ssh -o StrictHostKeyChecking=no -i /auth/keys/master-vpc-keypair-us-east-1.pem root@m$i.jam.maguscloud.com 'service jboss stop'
+        done
+fi
+
+# JBOSS START
+if [ $1 == 'start' ]; then
+        i="1"
+	echo "Start jboss on all backend servers (not M1)"
+        while [ $i -lt $mboxes ]
+        do
+                i=$[$i+1]
+                echo && echo "============"; echo "Starting m$i"; echo "============"; ssh -o StrictHostKeyChecking=no -i /auth/keys/master-vpc-keypair-us-east-1.pem root@m$i.jam.maguscloud.com 'service jboss start'
+        done
+fi
+
+# JBOSS RESTART
+if [ $1 == 'restart' ]; then
+        i="1"
+        echo "Restarting jboss on all backend servers (not M1)"
+        while [ $i -lt $mboxes ]
+        do
+                i=$[$i+1]
+                echo && echo "============"; echo "Starting m$i"; echo "============"; ssh -o StrictHostKeyChecking=no -i /auth/keys/master-vpc-keypair-us-east-1.pem root@m$i.jam.maguscloud.com 'services jboss stop && service jboss start'
+        done
+fi
+
+# JBOSS START
+if [ $1 == 'help' ]; then
+	clear
+	echo "JBOSS service script"
+	echo "===================="
+	echo ""
+	echo "Options are:"
+	echo "jb stop    - to stop jboss on all M servers, but not M1"
+	echo "jb start   - to start jboss on all M servers, but not M1"
+	echo "jb list    - to list all deployed versions in the standard deployments directory, for all servers"
+	echo "jb restart - stops and restarts all jboss services from M2 to the end."
+	echo "jb version - displays the version of the current script that you have installed."
+	echo "jb help    - displays this help page."
+	echo "jb         - any other value ignored."
+fi
+
+exit;
+
+
+
+
+
+
+
