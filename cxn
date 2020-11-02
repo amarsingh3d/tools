@@ -1,0 +1,117 @@
+#!/bin/bash
+
+# VARS #
+version=1.0
+modified=02/Nov/2020
+
+# NULL INPUT CAPTURE #
+if [ -z $1 ]; then
+   echo "You don't appear to have entered a valid option"
+   echo "use 'cxn help' for syntax assistance"
+   exit 1;
+fi
+
+# ABOUT #
+if [ $1 == 'version' ]; then
+   echo "==========================================================="
+   echo "'cxn' version $version written and developed by Graham Trueman"
+   echo "==========================================================="
+   exit 1;
+fi
+
+# HELP #
+if [ $1 == 'help' ]; then
+   clear
+   echo "========"
+   echo "CXN tool"
+   echo "========"
+   echo ""
+   echo "Syntax:  cxn env server  Makes a connection attempt      (example: cxn jam m1)"
+   echo "         cxn env key     Checks which ssh key is in use  (example: cxn jam key)"
+   echo ""
+   echo "This script provides a quick ssh connection to a known linux server."
+   echo "Assumptions are that a valid key and active firewall or vpn connection are available."
+   echo ""
+   echo ""
+   echo "=========================="
+   echo "'cxn' version: $version"
+   echo "Last modified: $modified"
+   echo "=========================="
+   echo ""
+   exit 1;
+fi
+
+# JAM #
+if [ $1 == 'jam' ]; then
+  echo "JAM ssh syntax detected."
+  key='master-vpc-keypair-us-east-1.pem'
+  if [ -z $2 ]; then
+    echo "No server parameters entered"
+    exit 1;
+  fi
+  if [ $2 == 'key' ]; then
+    echo "Using key: $key"
+    exit 1;
+  fi
+  if [[ $2 =~ ^[c|m|u][0-9]{1,2}$ ]]; then
+    echo "valid server $2 - attempting connection."
+    ssh -i /auth/keys/$key root@$2.jam.maguscloud.com
+  else
+    echo "invalid server detected: $2"
+  fi
+  exit 1;
+fi
+
+# HOSTING #
+if [ $1 == 'host' ] ; then
+  echo "HOSTING ssh syntax detected."
+  echo "There are no additional valid parameters to take at this time."
+  exit 1;
+fi
+
+# MY STUFF #
+if [ $1 == 'my' ] ; then
+  echo "MICKETTS ssh syntax detected."
+  key='use1-gt.pem'
+  if [ -z $2 ]; then
+    echo "No server parameters entered"
+    exit 1;
+  fi
+  if [ $2 == 'key' ]; then
+    echo "Using key: $key"
+    exit 1;
+  fi
+  if [[ $2 =~ ^w1$ ]]; then
+    echo "valid server $2 - attempting connection."
+    ssh -i /auth/keys/$key ubuntu@$2.micketts.co.uk
+  else
+    echo "invalid server detected: $2"
+  fi
+  exit 1;
+fi
+
+# BASTIONS #
+if [ $1 == 'bast' ] ; then
+  echo "BASTION ssh syntax detected."
+  key='master-vpc-keypair-us-east-1.pem'
+  if [ -z $2 ]; then
+    echo "No server parameters entered"
+    exit 1;
+  fi
+  if [ $2 == 'key' ]; then
+    echo "Using key: $key"
+    exit 1;
+  fi
+  if [[ $2 =~ ^[1-3]{1}$ ]]; then
+    echo "valid server bastion-$2 - attempting connection."
+    ssh -i /auth/keys/$key ubuntu@use1-bast-lin-$2.crownpeak.net
+  else
+    echo "invalid server detected: bastion-$2"
+  fi
+  exit 1;
+fi
+
+# NO MATCHES #
+   echo "You don't appear to have entered a valid option "
+   echo "use 'cxn help' for syntax assistance"
+   exit 1;
