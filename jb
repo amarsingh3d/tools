@@ -1,7 +1,7 @@
 #!/bin/bash
 # VARS #
-version=1.1.2
-modified="28 December 2020"
+version=1.2.1
+modified="22 January 2021"
 
 mboxes=38 # Can edit the number of M boxes here
 pkey="/auth/keys/master-vpc-keypair-us-east-1.pem" # Replace local pem key here
@@ -296,7 +296,7 @@ if [[ $1 == 'uptime' ]]; then
       echo "==========="
       echo "Checking c$i"
       echo "==========="
-      ssh -o StrictHostKeyChecking=no -i $pkey root@m$i.jam.maguscloud.com 'w | grep up' | awk {'print $3" "$4" "$5'}
+      ssh -o StrictHostKeyChecking=no -i $pkey root@c$i.jam.maguscloud.com 'w | grep up' | awk {'print $3" "$4" "$5'}
     done
 fi
 
