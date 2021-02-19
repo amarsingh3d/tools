@@ -1,0 +1,112 @@
+#!/bin/bash
+version=0.0.1
+modified=19/February/2021
+
+# Version details #
+if [[ "$1" == 'version' ]]; then
+	echo "============================================================="
+	echo "extract version $version written and developed by Graham Trueman"
+	echo "last modified ${modified}"
+	exit 1;
+fi
+
+# Help #
+if [[ "$1" == 'help' ]]; then
+	echo "============"
+	echo "Extract tool"
+	echo "============"
+	echo ""
+	echo "extract [command] to execute."
+	echo ""
+	echo "Command syntax"
+	echo "help - returns this help text"
+	echo "dns  - extracts sites and DNS records from applicationHost or VirtualHost to sites.txt and dns.txt"
+	echo "Further details will appear here..."
+fi
+
+# DNS Feature#
+if [[ "$1" == 'dns' ]]; then
+	if [[ -f "applicationHost.config" ]]; then # Default configuration
+		env=windows
+		echo "Windows IIS applicationHost.config found in folder.... proceeding with extraction"
+	elif [[ -f "apache.conf" ]]; then
+		env=linux
+		echo "apache.conf file found in folder... proceeding with extraction"
+	else
+		echo "No config detected. Please run the command in a folder containing valid IIS or Apache configuration"
+		echo "Valid filenames"
+		echo "   applicationHost.config"
+		echo "   apache.conf"
+		exit 1;
+	fi
+
+	# Creating empty placeholder files
+		>sites.txt
+		>dns.txt
+
+	# Perform extraction
+
+	if [[ "$env" == 'windows' ]]; then
+		echo "Extracting windows components"
+		# Extract all bound sites
+		more applicationHost.config | grep 'binding protocol' | grep http >>sites.txt
+		sed -i 's/\s*<binding[^\:]*\:[^\:]*\://g' sites.txt
+		sed -i 's/"\s\/>//g' sites.txt
+	fi
+	if [[ "$env" == 'linux' ]]; then
+		echo "Extracting linux components"
+		# Extract all bound sites
+		echo "Not done this yet for Linux ... coming soon!"
+		exit 1;
+	fi
+
+	# Sort alphabetically
+		sort -ub sites.txt -o sites.txt
+		sc=`more sites.txt | wc -l`
+		dos2unix sites.txt
+		echo "Sites are extracted to the sites.txt file"
+		echo "Total $sc records."
+
+	# Perform DNS lookup on all records
+	echo "Performing lookup. Please be patient, as this may take a few minutes depending on how many records. "
+	cat sites.txt | while read www
+		do
+		dig +noall +answer $www >>dns.txt
+		done
+	echo "Extracted DNS records to dns.txt"
+fi
+
+#
+
+
+if [ $1 == locate ];then
+		>results.txt # Create placeholder variable with no value.
+		echo "usage: extract locate IP1 IP2 IP3"
+		echo "will grep the DNS results file (dns.txt) for instances of the provided IP address(es)"
+		exit;
+
+	if [ -z $2 ]; then
+	   echo "Missing option 1 - using default for redirect 3.219.78.25"
+	   ip1='3.219.78.25'
+	else ip1=$2
+   	fi
+	more dns.txt | grep $ip1 >>results.txt
+	echo "Using the following IP Addresses"
+	        echo "1) $ip1"
+
+	if [ -z $3 ]; then
+	   echo "Missing option 2 - ignoring"
+	   exit;
+	 else ip2=$3
+	more dns.txt | grep $ip3 >>results.txt
+	echo "2) $ip3"
+	fi
+
+	if [ -z $4 ]; then
+	   echo "Missing option 3 - ignoring"
+	   exit;
+	else ip3=$4
+	more dns.txt | grep $ip4 >>results.txt
+	echo "3) $ip4"
+	fi
+fi
