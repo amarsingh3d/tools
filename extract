@@ -1,6 +1,6 @@
 #!/bin/bash
-version=0.0.2
-modified=20/February/2021
+version=0.0.3
+modified=04/March/2021
 
 # Version details #
 if [[ "$1" == 'version' ]]; then
@@ -116,16 +116,16 @@ if [[ $1 == 'locate' ]]; then
 		echo "Missing options 2 and 3 - ignoring"
 		exit;
 	else ip2=$3
-		more dns.txt | grep $ip3 >>location.txt
-		echo "2) $ip3"
+		more dns.txt | grep $ip2 >>location.txt
+		echo "2) $ip2"
 	fi
   # Third IP lookup
 	if [[ -z $4 ]]; then
 		echo "Missing option 3 - ignoring"
 		exit;
 	else ip3=$4
-		more dns.txt | grep $ip4 >>location.txt
-		echo "3) $ip4"
+		more dns.txt | grep $ip3 >>location.txt
+		echo "3) $ip3"
 	fi
 	echo "Information saved to 'location.txt'"
 fi
