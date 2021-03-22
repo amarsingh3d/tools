@@ -1,7 +1,7 @@
 #!/bin/bash
 # VARS #
-version=1.3.1
-modified="28 February 2021"
+version=1.4.1
+modified="22 March 2021"
 
 mboxes=38 # Can edit the number of M boxes here
 pkey="/auth/keys/master-vpc-keypair-us-east-1.pem" # Replace local pem key here
@@ -335,6 +335,40 @@ if [[ $1 == 'load' ]]; then
     done
 fi
 
+# JBOSS REPORT
+if [[ $1 == 'report' ]]; then
+  i="0"
+  >report.csv
+	 echo "Running report"
+   while [ $i -lt $mboxes ]
+   do
+     i=$[$i+1]
+     dpd=`ssh -o StrictHostKeyChecking=no -i $pkey root@m$i.jam.maguscloud.com 'ls /jboss/standalone/deployments/*.*ar'`
+     dpd=`echo ${dpd//\/jboss\/standalone\/deployments\//,}`
+     dpd=`echo ${dpd// /}`
+     typ=`ssh -o StrictHostKeyChecking=no -i $pkey root@m$i.jam.maguscloud.com 'curl --silent http://169.254.169.254/latest/meta-data/instance-type'`
+     upt=`ssh -o StrictHostKeyChecking=no -i $pkey root@m$i.jam.maguscloud.com 'uptime' | grep up | awk {'print $3" "$4'}`
+     if [[ {$upt} != *"day"* ]]; then
+       upt="<1 day,"
+     fi
+     echo "m$i,$upt$typ$dpd" >>report.csv
+   done
+   # C BOX
+   for i in {1..5}; do
+  #    ssh -o StrictHostKeyChecking=no -i $pkey root@c$i.jam.maguscloud.com 'uptime' | grep up | awk {'print $8" "$9" "$10" "$11" "$12'}
+    dpd=`ssh -o StrictHostKeyChecking=no -i $pkey root@c$i.jam.maguscloud.com 'ls /jboss/standalone/deployments/*.*ar'`
+    dpd=`echo ${dpd//\/jboss\/standalone\/deployments\//,}`
+    dpd=`echo ${dpd// /}`
+    typ=`ssh -o StrictHostKeyChecking=no -i $pkey root@c$i.jam.maguscloud.com 'curl --silent http://169.254.169.254/latest/meta-data/instance-type'`
+    upt=`ssh -o StrictHostKeyChecking=no -i $pkey root@c$i.jam.maguscloud.com 'uptime' | grep up | awk {'print $3" "$4'}`
+    if [[ {$upt} != *"day"* ]]; then
+      upt="<1 day,"
+    fi
+    echo "c$i,$upt$typ$dpd" >>report.csv
+   done
+   exit 1;
+fi
+
 # JBOSS HELP
 if [ $1 == 'help' ]; then
 	clear
@@ -350,8 +384,9 @@ if [ $1 == 'help' ]; then
 	echo "jb version - Displays the version of the current script that you have installed."
 	echo "jb help    - Displays this help page."
 	echo "jb script  - Displays script execution details"
-  echo "jb range   - Displays the parameter range that has bee set"
+  echo "jb range   - Displays the parameter range that has been set"
   echo "jb uptime  - Displays the uptime since last server start-up"
+  echo "jb report  - Outputs .csv report to file"
 	echo "jb         - any other value ignored."
 fi
 
