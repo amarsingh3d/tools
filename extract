@@ -1,0 +1,131 @@
+#!/bin/bash
+version=0.0.3
+modified=04/March/2021
+
+# Version details #
+if [[ "$1" == 'version' ]]; then
+	echo "============================================================="
+	echo "extract version $version written and developed by Graham Trueman"
+	echo "last modified ${modified}"
+	exit 1;
+fi
+
+# Help #
+if [[ "$1" == 'help' ]]; then
+	echo "============"
+	echo "Extract tool"
+	echo "============"
+	echo ""
+	echo "extract [command] to execute."
+	echo ""
+	echo "Command syntax"
+	echo "help - returns this help text"
+	echo "dns  - extracts sites, DNS records and the enpoint location from applicationHost or VirtualHost to sites.txt, endpoints and dns.txt"
+	echo "locate IP1 IP2 IP3 - returns records that match either of the entered IP addresses, against the dns.txt file collected above."
+	echo "  - run the extract dns first, and enter optional IP addresses. CP redirect is the default value for IP1 unless replaced."
+fi
+
+# DNS Feature#
+if [[ "$1" == 'dns' ]]; then
+	if [[ -f "applicationHost.config" ]]; then # Default configuration
+		env=windows
+		echo "Windows IIS applicationHost.config found in folder.... proceeding with extraction"
+	elif [[ -f "apache.conf" ]]; then
+		env=linux
+		echo "apache.conf file found in folder... proceeding with extraction"
+	else
+		echo "No config detected. Please run the command in a folder containing valid IIS or Apache configuration"
+		echo "Valid filenames"
+		echo "   applicationHost.config"
+		echo "   apache.conf"
+		exit 1;
+	fi
+
+	# Creating empty placeholder files
+		>sites.txt
+		>dns.txt
+		>endpoints.txt
+
+	# Perform extraction
+
+	if [[ "$env" == 'windows' ]]; then
+		echo "Extracting windows components"
+		# Extract all bound sites
+		more applicationHost.config | grep 'binding protocol' | grep http >>sites.txt
+		sed -i 's/\s*<binding[^\:]*\:[^\:]*\://g' sites.txt
+		sed -i 's/"\s\/>//g' sites.txt
+	fi
+	if [[ "$env" == 'linux' ]]; then
+		echo "Extracting linux components"
+		# Extract all bound sites
+		echo "Not done this yet for Linux ... coming soon!"
+		exit 1;
+	fi
+
+	# Sort alphabetically
+		sort -ub sites.txt -o sites.txt
+		sc=`more sites.txt | wc -l`
+		dos2unix sites.txt
+		echo "Sites are extracted to the sites.txt file"
+		echo "Total $sc records."
+
+	# Extract locations
+		echo "Performing lookup of DNS and enpoints."
+		echo "Please be patient, as this may take a few minutes depending on the number of records. "
+		for i in $(cat sites.txt); do
+			r=`curl $i -Is | grep -Fi Location | awk '{print $2}'`
+			echo -e "$i \t $r" >>endpoints.txt
+		done
+		echo "Extracted endpoint information"
+
+	# Perform DNS lookup on all records
+	cat sites.txt | while read www
+		do
+			dig +noall +answer $www | awk {'print $1"\t"$5'} >>dns.txt
+		done
+		echo "Extracted DNS records to dns.txt"
+fi
+
+# LOCATE feature
+
+if [[ $1 == 'locate' ]]; then
+	>location.txt # Create placeholder variable with no value.
+	echo "usage: extract locate IP1 IP2 IP3"
+	echo "will grep the DNS results file (dns.txt) for instances of the provided IP address(es)"
+
+  # Look for dns.txt file before proceeding
+	if [ ! -f dns.txt ]; then
+		echo "A valid dns.txt file is needed before this step can be executed."
+		echo "Please run the extraction tool against a valid host file and re-try."
+		echo "Command: extract dns"
+		echo ""
+		echo "Type 'extract help' for use commands."
+		exit 1;
+	fi
+  # First IP lookup if it exists
+	if [[ -z $2 ]]; then
+		echo "Missing option 1 - using default for redirect 3.219.78.25"
+		ip1='3.219.78.25'
+	else ip1=$2
+		more dns.txt | grep $ip1 >>location.txt
+		echo "Using the following IP Addresses"
+		echo "1) $ip1"
+	fi
+  # Second IP lookup
+	if [[ -z $3 ]]; then
+		echo "Missing options 2 and 3 - ignoring"
+		exit;
+	else ip2=$3
+		more dns.txt | grep $ip2 >>location.txt
+		echo "2) $ip2"
+	fi
+  # Third IP lookup
+	if [[ -z $4 ]]; then
+		echo "Missing option 3 - ignoring"
+		exit;
+	else ip3=$4
+		more dns.txt | grep $ip3 >>location.txt
+		echo "3) $ip3"
+	fi
+	echo "Information saved to 'location.txt'"
+fi
