@@ -1,26 +1,27 @@
 #!/bin/bash
 
 # VARS #
-version=1.0
-modified=02/Nov/2020
+version=1.1
+modified="25/March/2021"
 
 # NULL INPUT CAPTURE #
-if [ -z $1 ]; then
+if [[ -z $1 ]]; then
    echo "You don't appear to have entered a valid option"
    echo "use 'cxn help' for syntax assistance"
    exit 1;
 fi
 
 # ABOUT #
-if [ $1 == 'version' ]; then
+if [[ $1 == 'version' ]]; then
    echo "==========================================================="
    echo "'cxn' version $version written and developed by Graham Trueman"
+   echo "Last updated: $modified"
    echo "==========================================================="
    exit 1;
 fi
 
 # HELP #
-if [ $1 == 'help' ]; then
+if [[ $1 == 'help' ]]; then
    clear
    echo "========"
    echo "CXN tool"
@@ -33,23 +34,23 @@ if [ $1 == 'help' ]; then
    echo "Assumptions are that a valid key and active firewall or vpn connection are available."
    echo ""
    echo ""
-   echo "=========================="
+   echo "=============================="
    echo "'cxn' version: $version"
    echo "Last modified: $modified"
-   echo "=========================="
+   echo "=============================="
    echo ""
    exit 1;
 fi
 
 # JAM #
-if [ $1 == 'jam' ]; then
+if [[ $1 == 'jam' ]]; then
   echo "JAM ssh syntax detected."
   key='master-vpc-keypair-us-east-1.pem'
-  if [ -z $2 ]; then
+  if [[ -z $2 ]]; then
     echo "No server parameters entered"
     exit 1;
   fi
-  if [ $2 == 'key' ]; then
+  if [[ $2 == 'key' ]]; then
     echo "Using key: $key"
     exit 1;
   fi
@@ -62,22 +63,30 @@ if [ $1 == 'jam' ]; then
   exit 1;
 fi
 
+# DQM SERVICES #
+if [[ $1 == 'elasticsearch' ]]; then
+    echo "Connecting to Elasticsearch"
+    key='master-vpc-keypair-us-east-1.pem'
+    ssh -i /auth/keys/$key ubuntu@kibana.dqm.crownpeak.net
+    exit 1;
+fi
+
 # HOSTING #
-if [ $1 == 'host' ] ; then
+if [[ $1 == 'host' ]] ; then
   echo "HOSTING ssh syntax detected."
   echo "There are no additional valid parameters to take at this time."
   exit 1;
 fi
 
 # MY STUFF #
-if [ $1 == 'my' ] ; then
+if [[ $1 == 'my' ]] ; then
   echo "MICKETTS ssh syntax detected."
   key='use1-gt.pem'
-  if [ -z $2 ]; then
+  if [[ -z $2 ]]; then
     echo "No server parameters entered"
     exit 1;
   fi
-  if [ $2 == 'key' ]; then
+  if [[ $2 == 'key' ]]; then
     echo "Using key: $key"
     exit 1;
   fi
@@ -91,14 +100,14 @@ if [ $1 == 'my' ] ; then
 fi
 
 # BASTIONS #
-if [ $1 == 'bast' ] ; then
+if [[ $1 == 'bast' ]] ; then
   echo "BASTION ssh syntax detected."
   key='master-vpc-keypair-us-east-1.pem'
   if [ -z $2 ]; then
     echo "No server parameters entered"
     exit 1;
   fi
-  if [ $2 == 'key' ]; then
+  if [[ $2 == 'key' ]]; then
     echo "Using key: $key"
     exit 1;
   fi
