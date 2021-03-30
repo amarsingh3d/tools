@@ -1,9 +1,9 @@
 #!/bin/bash
 # VARS #
-version=2.0.1
-modified="25 March 2021"
+version=2.0.2
+modified="30 March 2021"
 
-mboxes=38 # Can edit the number of M boxes here
+mboxes=29 # Can edit the number of M boxes here
 pkey="/auth/keys/master-vpc-keypair-us-east-1.pem" # Replace local pem key here
 
 # NULL INPUT CAPTURE #
@@ -44,7 +44,7 @@ if [[ $1 == 'list' ]]; then
        ssh -o StrictHostKeyChecking=no -i $pkey root@m$i.jam.maguscloud.com 'ls -la /jboss/standalone/deployments/*monitor*.ear 2> /dev/null' >>monitor.txt
      done
      # Tidy up file
-     echo "m40" >> monitor.txt
+     echo "m31" >> monitor.txt
      echo `cat monitor.txt` > monitor.txt
      cp monitor.txt monitor-results.txt
      for i in {1..5}; do sed -i -r 's/m[0-9]{1,2}\sm/m/g' monitor.txt; done
