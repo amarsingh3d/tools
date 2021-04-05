@@ -1,17 +1,17 @@
 #!/bin/bash
 # VARS #
-version=1.0.2
-modified=14/Oct/2019
+version=1.0.3
+modified=05/April/2021
 
 # NULL INPUT CAPTURE #
-if [ -z $1 ]; then
+if [[ -z $1 ]]; then
    echo "You don't appear to have entered a value for the fqdn"
    echo "use 'test-redirect help' for syntax assistance"
    exit 1;
 fi
 
 #HELP #
-if [ $1 == 'help' ]; then
+if [[ $1 == 'help' ]]; then
    clear
    echo "==========================="
    echo "Test redirect tool"
@@ -28,7 +28,7 @@ if [ $1 == 'help' ]; then
 fi
 
 # New redirect
-if [ -z $2 ]; then
+if [[ -z $2 ]]; then
 	dom=$1
 	echo "Testing redirect service for $dom"
 	curl -v --header "Host: $dom" redirect.crownpeak.net
@@ -36,7 +36,7 @@ if [ -z $2 ]; then
   exit 1;
 fi
 
-if [ $2 == 'old' ]; then
+if [[ $2 == 'old' ]]; then
 # Old redirect
 	dom=$1
 	echo "Testing redirect service for $dom using old service"

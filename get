@@ -1,22 +1,22 @@
 #!/bin/bash
 
 # VARS #
-version=1.1.1
-modified=30/Mar/2019
+version=1.1.2
+modified=05/April/2021
 location=/tmp/get-output
 
 # CREATE TEMP DIR #
 mkdir -p $location
 
 # NULL INPUT CAPTURE #
-if [ -z $1 ]; then
+if [[ -z $1 ]]; then
    echo "You don't appear to have entered a value for the fqdn"
    echo "use 'get help' for syntax assistance"
    exit 1;
 fi
 
 # ABOUT #
-if [ $1 == 'version' ]; then
+if [[ $1 == 'version' ]]; then
    echo "==========================================================="
    echo "'get' version $version written and developed by Graham Trueman"
    echo "==========================================================="
@@ -24,7 +24,7 @@ if [ $1 == 'version' ]; then
 fi
 
 # HELP #
-if [ $1 == 'help' ]; then
+if [[ $1 == 'help' ]]; then
    clear
    echo "========"
    echo "GET tool"
@@ -54,7 +54,7 @@ if [ $1 == 'help' ]; then
 fi
 
 # CLEAN DIRECTORY #
-if [ $1 == 'clean' ] ; then
+if [[ $1 == 'clean' ]] ; then
   echo "Cleaning leftover files from previous script execution."
   rm -f $location/*
   exit 1;
@@ -62,13 +62,13 @@ fi
 
 # ADDITIONAL INPUT MISSING CAPTURE #
 
-if [ -z $2 ]; then
+if [[ -z $2 ]]; then
    echo "You don't appear to have entered a username"
    echo "use 'get help' for syntax assistance"
    exit 1;
 fi
 
-if [ -z $3 ]; then
+if [[ -z $3 ]]; then
    echo "You don't appear to have entered a value for the password"
    echo "use 'get help' for syntax assistance"
    exit 1;
@@ -80,7 +80,7 @@ if [[ -z $4 ]] || [[ $4 == 'keep' ]]; then
   	echo "Attempting to access $1 with user $2 and password --REDACTED--"
     wget --user=$2 --password=$3 $1 -P $location/
 else
-	if [ $4 == 'nocheck' ]; then
+	if [[ $4 == 'nocheck' ]]; then
 		echo "Attempting to access $1 with user $2 and password --REDACTED--"
     wget --user=$2 --password=$3 $1 --no-check-certificate -P $location/
 	fi

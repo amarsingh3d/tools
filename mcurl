@@ -1,13 +1,15 @@
 #!/bin/bash
-version=0.1
+version=1.0
+modified="05/April/2021"
 
-if [ $1 == 'version' ]; then
+if [[ $1 == 'version' ]]; then
    echo "========================================================="
    echo "mcurl version $version written and developed by Graham Trueman"
-   exit 1;	
+   echo "Last modified: $modified"
+   exit 1;
 fi
 
-if [ $1 == 'help' ]; then
+if [[ $1 == 'help' ]]; then
    echo "Usage: mcurl url (string) loops (integer <=100) options"
    echo ""
    echo "The url will be requested outside of a browser x times, where x is the loop value entered."
@@ -18,13 +20,13 @@ if [ $1 == 'help' ]; then
    exit 1;
 fi
 
-if [ -z $1 ]; then
+if [[ -z $1 ]]; then
    echo "you didn't enter any values"
    echo "mcurl help for syntax assistance"
    exit 1;
 fi
 
-if [ -z $2 ]; then
+if [[ -z $2 ]]; then
    echo "you didn't the correct number of values"
    echo "mcurl help for syntax assistance"
    exit 1;
@@ -39,4 +41,3 @@ fi
    echo "---"
    echo $out
    eval $out
-

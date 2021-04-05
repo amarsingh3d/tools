@@ -1,6 +1,6 @@
 #!/bin/bash
-version=0.0.3
-modified=04/March/2021
+version=0.0.4
+modified=05/April/2021
 
 # Version details #
 if [[ "$1" == 'version' ]]; then
@@ -20,7 +20,7 @@ if [[ "$1" == 'help' ]]; then
 	echo ""
 	echo "Command syntax"
 	echo "help - returns this help text"
-	echo "dns  - extracts sites, DNS records and the enpoint location from applicationHost or VirtualHost to sites.txt, endpoints and dns.txt"
+	echo "dns  - extracts sites, DNS records and the endpoint location from applicationHost or VirtualHost to sites.txt, endpoints and dns.txt"
 	echo "locate IP1 IP2 IP3 - returns records that match either of the entered IP addresses, against the dns.txt file collected above."
 	echo "  - run the extract dns first, and enter optional IP addresses. CP redirect is the default value for IP1 unless replaced."
 fi
