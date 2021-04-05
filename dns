@@ -1,24 +1,26 @@
 #!/bin/bash
 # VARS #
-version=1.0.1
+version=1.0.2
+modified="25/March/2021"
 
 # NULL INPUT CAPTURE #
-if [ -z $1 ]; then
+if [[ -z $1 ]]; then
    echo "You don't appear to have entered a value for the fqdn"
    echo "use 'dns help' for syntax assistance"
    exit 1;
 fi
 
 # ABOUT #
-if [ $1 == 'version' ]; then
+if [[ $1 == 'version' ]]; then
    echo "==========================================================="
    echo "'dns' version $version written and developed by Graham Trueman"
+   echo "Last modified: $modified"
    echo "==========================================================="
    exit 1;
 fi
 
 #HELP #
-if [ $1 == 'help' ]; then
+if [[ $1 == 'help' ]]; then
    clear
    echo "================"
    echo "DNS Look up tool"
@@ -27,7 +29,7 @@ if [ $1 == 'help' ]; then
    echo "This is a simple tool to perform a dig lookup for any FQDN"
    echo "Syntax: dns FQDN"
    echo ""
-   echo "The results clear all the default DiG display flags, except for the answer section, thus cleaning up the output and making it easier to read." 
+   echo "The results clear all the default DiG display flags, except for the answer section, thus cleaning up the output and making it easier to read."
    echo ""
    exit 1;
 fi
@@ -36,4 +38,3 @@ fi
 echo "Checking DNS records for $1"
 dig +noall +answer $1
 echo "<End>"
-
