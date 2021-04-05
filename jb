@@ -1,20 +1,20 @@
 #!/bin/bash
 # VARS #
-version=2.0.2
-modified="30 March 2021"
+version=2.0.3
+modified="05 April 2021"
 
 mboxes=29 # Can edit the number of M boxes here
 pkey="/auth/keys/master-vpc-keypair-us-east-1.pem" # Replace local pem key here
 
 # NULL INPUT CAPTURE #
-if [ -z $1 ]; then
+if [[ -z $1 ]]; then
    echo "Missing option - nothing to execute"
    echo "Usage: jb (range|start|stop|restart|list|version|help)"
    exit 1;
 fi
 
 # ABOUT #
-if [ $1 == 'version' ]; then
+if [[ $1 == 'version' ]]; then
    echo "============================================================="
    echo "jb version $version written and developed by Graham Trueman"
    echo "last modified: ${modified}"
@@ -201,7 +201,7 @@ if [ $1 == 'restart' ]; then
        done
        exit 1;
   fi
-  if [ $2 == 'monitor' ]; then
+  if [[ $2 == 'monitor' ]]; then
     echo "Restarting all MONITOR boxes"
     >monitor.txt
     i="1"
@@ -229,7 +229,7 @@ if [ $1 == 'restart' ]; then
      rm monitor*.txt
      exit 1;
   fi
-  if [ $2 == 'trawl' ]; then
+  if [[ $2 == 'trawl' ]]; then
     echo "Restarting all TRAWL boxes"
     >monitor.txt
     i="1"
@@ -422,7 +422,7 @@ if [[ $1 == 'logs' ]]; then
 fi
 
 # JBOSS HELP
-if [ $1 == 'help' ]; then
+if [[ $1 == 'help' ]]; then
 	clear
 	echo "JBOSS service script v $version"
 	echo "============================"

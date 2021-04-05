@@ -1,9 +1,9 @@
 #!/bin/bash
-version=1.2.1
-modified=13/March/2020
+version=1.2.2
+modified=05/April/2021
 
 # Version details #
-if [ "$1" == 'version' ]; then
+if [[ "$1" == 'version' ]]; then
    echo "========================================================="
    echo "cert version $version written and developed by Graham Trueman"
    echo "last modified ${modified}"
@@ -11,7 +11,7 @@ if [ "$1" == 'version' ]; then
 fi
 
 # Help #
-if [ "$1" == 'help' ]; then
+if [[ "$1" == 'help' ]]; then
    echo "================"
    echo "Certificate tool"
    echo "================"
@@ -88,21 +88,21 @@ if [ "$1" == 'help' ]; then
 fi
 
 # No options entered #
-if [ -z $1 ]; then
+if [[ -z $1 ]]; then
    echo "You didn't enter any values"
    echo "See cert help for syntax assistance"
    exit 1;
 fi
 
 # CSR Checking #
-if [ "$1" == 'csr' ]; then
+if [[ "$1" == 'csr' ]]; then
    if [ -z $2 ]; then
      echo 'Please enter a path and filename for your csr'
      exit 1;
   fi
   echo "Checking CSR at $2"
   openssl req -text -noout -verify -in $2
-  if [ "$3" == 'full' ]; then
+  if [[ "$3" == 'full' ]]; then
     echo ""
     echo "========"
     echo "CSR body"
@@ -113,31 +113,31 @@ if [ "$1" == 'csr' ]; then
 fi
 
 # PFX Extraction tools#
-if [ "$1" == 'pfx' ]; then
-   if [ -z $2 ]; then
+if [[ "$1" == 'pfx' ]]; then
+   if [[ -z $2 ]]; then
      echo "Please enter a path and filename for your pfx"
      exit 1;
    fi
-   if [ "$2" == 'create' ]; then
+   if [[ "$2" == 'create' ]]; then
       echo "PFX creation tool, will build using certificate.crt and private.key if they exist"
       rm -f my.pfx
       openssl pkcs12 -export -out my.pfx -inkey private.key -in certificate.crt
       echo "Saved to my.pfx"
       exit 1;
    fi
-   if [ "$3" == "cer" ]; then
+   if [[ "$3" == "cer" ]]; then
       rm certificate.cer
       echo "Extracting the certificate from $2"
       openssl pkcs12 -in $2 -clcerts -nokeys -out certificate.cer
       exit 1;
   fi
-  if [ "$3" == 'key' ]; then
+  if [[ "$3" == 'key' ]]; then
      rm certificate.cer
      echo "Extracting the private key from $2"
      openssl pkcs12 -in $2 -nocerts -out key.pem
      exit 1;
   fi
-  if [ "$3" == 'int' ]; then
+  if [[ "$3" == 'int' ]]; then
      rm chain.txt
      echo "Extracting the intermediate chain from $2"
      openssl pkcs12 -in $2 -out chain.txt -nodes
@@ -149,8 +149,8 @@ if [ "$1" == 'pfx' ]; then
 fi
 
 # P7B Extraction tools#
-if [ "$1" == 'p7b' ]; then
-   if [ -z $2 ]; then
+if [[ "$1" == 'p7b' ]]; then
+   if [[ -z $2 ]]; then
      echo "Please enter a path and filename for your p7b"
      exit 1;
   fi
@@ -161,8 +161,8 @@ if [ "$1" == 'p7b' ]; then
 fi
 
 # Decrypt private key#
-if [ "$1" == 'decrypt' ]; then
-   if [ -z $2 ]; then
+if [[ "$1" == 'decrypt' ]]; then
+   if [[ -z $2 ]]; then
      echo "Please enter a path and filename for your encrypted private key"
      exit 1;
   fi
@@ -172,8 +172,8 @@ if [ "$1" == 'decrypt' ]; then
 fi
 
 # Certificate Verification
-if [ "$1" == 'verify' ]; then
-   if [ -z $2 ]; then
+if [[ "$1" == 'verify' ]]; then
+   if [[ -z $2 ]]; then
       echo "Please enter the domain that you wish to verify"
       exit 1;
    fi
@@ -182,13 +182,13 @@ if [ "$1" == 'verify' ]; then
 fi
 
 # Key check
-if [ "$1" == 'check' ]; then
-   if [ -z $2 ]; then
+if [[ "$1" == 'check' ]]; then
+   if [[ -z $2 ]]; then
       echo "Options cert check (private(key)|cert filename(optional)"
       exit 1;
    fi
-   if [ "$2" == 'private' ]; then
-      if [ -z $3 ]; then
+   if [[ "$2" == 'private' ]]; then
+      if [[ -z $3 ]]; then
 	        echo "Check default private.key"
 	        openssl pkey -in private.key -pubout -outform pem | sha256sum
 	        exit 1;
@@ -197,8 +197,8 @@ if [ "$1" == 'check' ]; then
       openssl pkey -in $3 -pubout -outform pem | sha256sum
       exit 1;
    fi
-   if [ "$2" == 'cert' ]; then
-      if [ -z $3 ]; then
+   if [[ "$2" == 'cert' ]]; then
+      if [[ -z $3 ]]; then
           echo "Check default certificate.crt"
           openssl x509 -in certificate.crt -pubkey -noout -outform pem | sha256sum
           exit 1;
