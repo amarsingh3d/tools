@@ -98,6 +98,22 @@ if [[ $1 == 'my' ]] ; then
   fi
   exit 1;
 fi
+# LOCAL VM INFRASTRUCTURE
+if [[ $1 == 'local' ]]; then
+   echo "Local VM environment detected."
+   key='graham-home.key'
+   if [[ -z $2 ]]; then
+     echo "No server paramters entered."
+     exit 1;
+   fi
+   if [[ $2 =~ ^[w|d|a][0-9b][0-9]?$ ]]; then
+     echo "valid server $2 - attempting connection."
+     ssh -i /auth/keys/$key graham@local-$2
+   else
+   echo "invalid server detected: $2"
+   fi
+   exit 1;
+fi
 
 # BASTIONS #
 if [[ $1 == 'bast' ]] ; then
