@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # VARS #
-version=1.1
-modified="25/March/2021"
+version=1.2
+modified="11/April/2021"
 
 # NULL INPUT CAPTURE #
 if [[ -z $1 ]]; then
