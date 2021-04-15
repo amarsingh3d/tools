@@ -1,6 +1,6 @@
 #!/bin/bash
-version=0.0.4
-modified=05/April/2021
+version=1.0.0
+modified=15/April/2021
 
 # Version details #
 if [[ "$1" == 'version' ]]; then
@@ -58,8 +58,9 @@ if [[ "$1" == 'dns' ]]; then
 	if [[ "$env" == 'linux' ]]; then
 		echo "Extracting linux components"
 		# Extract all bound sites
-		echo "Not done this yet for Linux ... coming soon!"
-		exit 1;
+		more apache.conf | grep Server[NA][al][mi][ea] | grep -v VirtualHost >>sites.txt
+		sed -i 's/.*Server//g' sites.txt
+		sed -i 's/^[NAaeilms]*\s//' sites.txt
 	fi
 
 	# Sort alphabetically
