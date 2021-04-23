@@ -1,6 +1,6 @@
 #!/bin/bash
-version=1.0
-modified="05/April/2021"
+version=1.1
+modified="23/April/2021"
 
 if [[ $1 == 'version' ]]; then
    echo "========================================================="
@@ -32,10 +32,22 @@ if [[ -z $2 ]]; then
    exit 1;
 fi
 
+# mcurl loop
+   if [[ $3 == 'creds' ]] || [[ $3 == 'cred' ]] || [[ $3 == 'credentials' ]]; then
+     echo "Using credentials"
+     if [[ -z $4 ]] || [[ -z $5 ]]; then
+       echo "No credentials submitted - please retry."
+       exit 1;
+     fi
+   fi
    echo "running the multi-curl loop for $1 over $2 attempts"
    lp="for i in {1..$2}; "
    da='do echo -ne "Attempt $i..." ; '
    ct="content=\`curl -s "
+   if [[ ! -z $3 ]]; then
+     echo "plus creds"
+     ct="content=\`curl -s -u $4:$5 "
+   fi
    cu='` ; len=${#content} ; echo "length $len"; done'
    out=$lp$da$ct$1$cu
    echo "---"

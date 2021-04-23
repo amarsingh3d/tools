@@ -3,7 +3,7 @@
 version=2.0.3
 modified="05 April 2021"
 
-mboxes=29 # Can edit the number of M boxes here
+mboxes=30 # Can edit the number of M boxes here
 pkey="/auth/keys/master-vpc-keypair-us-east-1.pem" # Replace local pem key here
 
 # NULL INPUT CAPTURE #
@@ -44,7 +44,7 @@ if [[ $1 == 'list' ]]; then
        ssh -o StrictHostKeyChecking=no -i $pkey root@m$i.jam.maguscloud.com 'ls -la /jboss/standalone/deployments/*monitor*.ear 2> /dev/null' >>monitor.txt
      done
      # Tidy up file
-     echo "m31" >> monitor.txt
+     echo "m32" >> monitor.txt
      echo `cat monitor.txt` > monitor.txt
      cp monitor.txt monitor-results.txt
      for i in {1..5}; do sed -i -r 's/m[0-9]{1,2}\sm/m/g' monitor.txt; done
@@ -67,7 +67,7 @@ if [[ $1 == 'list' ]]; then
        ssh -o StrictHostKeyChecking=no -i $pkey root@m$i.jam.maguscloud.com 'ls -la /jboss/standalone/deployments/*trawl*.ear 2> /dev/null' >>trawl.txt
      done
      # Tidy up file
-     echo "m40" >> trawl.txt
+     echo "m32" >> trawl.txt
      echo `cat trawl.txt` > trawl.txt
      for i in {1..5}; do sed -i -r 's/m[0-9]{1,2}\sm/m/g' trawl.txt; done
      sed -i 's/\([0-9]\)\s/\1\n/g' ./trawl.txt
@@ -89,7 +89,7 @@ if [[ $1 == 'list' ]]; then
        ssh -o StrictHostKeyChecking=no -i $pkey root@m$i.jam.maguscloud.com 'ls -la /jboss/standalone/deployments/*harvest*.ear 2> /dev/null' >>harvest.txt
      done
      # Tidy up file
-     echo "m40" >> harvest.txt
+     echo "m32" >> harvest.txt
      echo `cat harvest.txt` > harvest.txt
      for i in {1..5}; do sed -i -r 's/m[0-9]{1,2}\sm/m/g' harvest.txt; done
      sed -i 's/\([0-9]\)\s/\1\n/g' ./harvest.txt
@@ -213,7 +213,7 @@ if [ $1 == 'restart' ]; then
        ssh -o StrictHostKeyChecking=no -i $pkey root@m$i.jam.maguscloud.com 'ls -la /jboss/standalone/deployments/*monitor*.ear 2> /dev/null' >>monitor.txt
      done
      # Tidy up file
-     echo "m40" >> monitor.txt
+     echo "m32" >> monitor.txt
      echo `cat monitor.txt` > monitor.txt
      cp monitor.txt monitor-results.txt
      for i in {1..5}; do sed -i -r 's/m[0-9]{1,2}\sm/m/g' monitor.txt; done
@@ -241,7 +241,7 @@ if [ $1 == 'restart' ]; then
        ssh -o StrictHostKeyChecking=no -i $pkey root@m$i.jam.maguscloud.com 'ls -la /jboss/standalone/deployments/*trawl*.ear 2> /dev/null' >>trawl.txt
      done
      # Tidy up file
-     echo "m40" >> trawl.txt
+     echo "m32" >> trawl.txt
      echo `cat trawl.txt` > trawl.txt
      for i in {1..5}; do sed -i -r 's/m[0-9]{1,2}\sm/m/g' trawl.txt; done
      sed -i 's/\([0-9]\)\s/\1\n/g' ./trawl.txt
