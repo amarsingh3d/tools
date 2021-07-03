@@ -1,7 +1,7 @@
 #!/bin/bash
 # VARS #
-version=2.0.3
-modified="05 April 2021"
+version=2.1.1
+modified="03 July 2021"
 
 mboxes=30 # Can edit the number of M boxes here
 pkey="/auth/keys/master-vpc-keypair-us-east-1.pem" # Replace local pem key here
@@ -383,7 +383,7 @@ if [[ $1 == 'logs' ]]; then
   fi
   if [[ -z $3 ]]; then
     echo "No log type entered"
-    echo "Choose from apache, spelling, jboss"
+    echo "Choose from apache, analytics, checkpoint, identity, security, spelling, subscriptions, jboss"
     exit 1;
   fi
   if [[ $3 == 'apache' ]]; then
@@ -391,19 +391,24 @@ if [[ $1 == 'logs' ]]; then
     cd /tmp/logs/$2
     rm $2-apache.logs.tgz
     scp -p -i $pkey root@$2.jam.maguscloud.com:/var/log/apache2/crownpeak/*.log* .
-    tar -cvzf $2-apache.logs.tgz *.log*
-    rm dqm.crownpeak*log*
-    echo "Collected"
+    tar -cvzf $2-apache.logs.tgz dqm.crownpeak.*log*
+    rm dqm.crownpeak.*log*
+    echo "Collected Apache logs for $2"
     exit 1;
   fi
-  if [[ $3 == 'spelling' ]]; then
+  if [[ $3 == 'analytics' ]]||
+     [[ $3 == 'checkpoint' ]]||
+     [[ $3 == 'identity' ]]||
+     [[ $3 == 'security' ]]||
+     [[ $3 == 'spelling' ]]||
+     [[ $3 == 'subscriptions' ]]; then
     mkdir -p /tmp/logs/$2
     cd /tmp/logs/$2
-    rm $2-spelling.logs.tgz
-    scp -p -i $pkey root@$2.jam.maguscloud.com:/mnt/spelling/log/*.log* .
-    tar -cvzf $2-spelling.logs.tgz *.log*
-    rm spelling*log*
-    echo "Collected"
+    rm $2-$3.logs.tgz
+    scp -p -i $pkey root@$2.jam.maguscloud.com:/mnt/$3/log/*.log* .
+    tar -cvzf $2-$3.logs.tgz *.log *.log.2*
+    rm $3*log*
+    echo "Collected $3 logs for $2"
     exit 1;
   fi
   if [[ $3 == 'jboss' ]]; then
@@ -413,13 +418,27 @@ if [[ $1 == 'logs' ]]; then
     scp -p -i $pkey root@$2.jam.maguscloud.com:/usr/local/jboss-as/standalone/log/server.log* .
     tar -cvzf $2-jboss.logs.tgz server.log*
     rm server.log*
-    echo "Collected"
+    echo "Collected jboss logs for $2"
     exit 1;
   fi
   echo "Invalid option entered."
   echo "See jb logs help for more information"
   exit 1;
 fi
+
+# TEST BLOCK
+if [[ $1 == 'test' ]]; then
+  echo "This is a test loop"
+  if [[ $2 == 'help' ]]; then
+    echo "This is the help text"
+  fi
+  if [[ $2 == 'monitor' ]]||
+     [[ $2 == 'checkpoint' ]]; then
+    echo "Looking for logs for $2"
+  fi
+  exit 1;
+fi
+
 
 # JBOSS HELP
 if [[ $1 == 'help' ]]; then
@@ -443,6 +462,5 @@ if [[ $1 == 'help' ]]; then
   echo "jb uptime  - Displays the uptime since last server start-up"
 	echo "jb         - any other value ignored."
 fi
-
 
 exit;
