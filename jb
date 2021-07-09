@@ -313,7 +313,7 @@ if [[ $1 == 'uptime' ]]; then
     done
 fi
 
-# JBOSS UPTIME
+# JBOSS LOAD AVERAGES
 if [[ $1 == 'load' ]]; then
   i="0"
 	 echo "Checking average load on all jboss server instances"
@@ -332,6 +332,28 @@ if [[ $1 == 'load' ]]; then
       echo "Checking c$i"
       echo "==========="
       ssh -o StrictHostKeyChecking=no -i $pkey root@c$i.jam.maguscloud.com 'uptime' | grep up | awk {'print $8" "$9" "$10" "$11" "$12'}
+    done
+fi
+
+# JBOSS SERVER OPERATING SYSTEM
+if [[ $1 == 'os' ]]; then
+  i="0"
+         echo "Checking average load on all jboss server instances"
+   while [ $i -lt $mboxes ]
+   do
+     i=$[$i+1]
+     echo ""
+     echo "============"
+     echo "Checking m$i"
+     echo "============"
+     ssh -o StrictHostKeyChecking=no -i $pkey root@m$i.jam.maguscloud.com 'lsb_release -a 2>/dev/null' | grep Description | grep -v LSB | awk {'print $2" "$3" "$4'}
+   done
+   for i in {1..5}; do
+      echo ""
+      echo "==========="
+      echo "Checking c$i"
+      echo "==========="
+      ssh -o StrictHostKeyChecking=no -i $pkey root@c$i.jam.maguscloud.com 'lsb_release -a 2>/dev/null' | grep Description | grep -v LSB | awk {'print $2" "$3" "$4'}
     done
 fi
 
