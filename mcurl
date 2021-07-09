@@ -1,6 +1,6 @@
 #!/bin/bash
-version=1.1
-modified="23/April/2021"
+version=1.2
+modified="09/July/2021"
 
 if [[ $1 == 'version' ]]; then
    echo "========================================================="
@@ -15,8 +15,9 @@ if [[ $1 == 'help' ]]; then
    echo "The url will be requested outside of a browser x times, where x is the loop value entered."
    echo "The size of the file received will be logged in order that consistency can be verified"
    echo ""
-   echo "Options: silent (default). Other options may be added at a later date."
-
+   echo "Options: silent (default)"
+   echo "         creds username password - to add user credentials where they may be required."
+   echo "         cred | credentials      - acceptable variation of creds option"
    exit 1;
 fi
 
