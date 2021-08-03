@@ -72,7 +72,7 @@ if [[ $1 == 'instances' ]]; then
    exit 1;
 fi
 
-# TEST
+# WORKING TEST BLOCK
 if [[ $1 == 'test' ]]; then
    echo "Test input"
    echo "----------"
