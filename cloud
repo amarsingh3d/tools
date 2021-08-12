@@ -66,7 +66,7 @@ if [[ $1 == 'instances' ]]; then
          aws ec2 --profile pu-${account} --region $region describe-instances --filters 'Name=instance-state-name,Values=running' --query 'Reservations[*].Instances[*].{Account:`'$account'`,Region:`'$region'`,InstType:InstanceType,InstId:InstanceId,AZ:Placement.AvailabilityZone,Name:Tags[?Key==`Name`]|[0].Value,Spot:InstanceLifecycle,State:State.Name,Platform:Platform}' --output text >> $outfile$timestamp/report.txt
       done
    done
-   echo "File saved to $outfile/$timestamp/report.txt"
+   echo "File saved to $outfile$timestamp/report.txt"
    # END OF FUNCTION
 
    exit 1;
