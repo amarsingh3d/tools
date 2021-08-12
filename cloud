@@ -1,0 +1,99 @@
+#!/bin/bash
+# VARS #
+version=0.1
+modified="01 August 2021"
+outfile="/workspace/logs/"
+timestamp=$(date +"%d%b%Y")
+
+# NULL INPUT CAPTURE #
+if [[ -z $1 ]]; then
+   echo "Missing option - nothing to execute"
+   echo "Usage: cloud (instances|count|details|help|version)"
+   exit 1;
+fi
+
+# ABOUT #
+if [[ $1 == 'version' ]]; then
+   echo "============================================================="
+   echo "cloud version $version written and developed by Graham Trueman"
+   echo "last modified: ${modified}"
+   echo "============================================================="
+   exit 1;
+fi
+
+# HELP
+if [[ $1 == 'help' ]]; then
+   echo "Use the following syntax:"
+   echo "-------------------------"
+   echo "cloud help                   - to display this help page"
+   echo "cloud version                - shows the current version you are using"
+   echo "cloud details [instanceID]   - returns information about a specific instance"
+   echo "cloud count [account] [type] - returns a count of all instance types for a specified account"
+   echo "cloud instances [options]    - outputs report of all instances to a tab delimited file"
+   echo "                 options are :"
+   echo "                   [null]    - default value returns for all accounts"
+   echo "                   [account] - specify the account required, e.g. dqm, dqd, dxm, dxd"
+   echo "   Output directory location - $outfile$timestamp/"
+   echo "Where multiple entries are "
+   exit 1;
+fi
+
+# INSTANCE REPORT
+if [[ $1 == 'instances' ]]; then
+   echo "Gather list of instances"
+   echo "------------------------"
+   # USE DEFAULT UNLESS USER INPUT IS DETECTED
+   accounts="cor,pop,dxm,hos,sea,wco,dxd,dqm,dqd"
+   if [[ -z $2 ]]; then
+      echo "Using default account set (cor,pop,dxm,hos,sea,wco,dxd,dqm,dqd)"
+   else accounts=$2
+   fi
+
+   # SUBSTITUTE COMMAS FOR SPACES TO USE IN LOOP
+   accounts=`echo "$accounts" | sed -r 's/,/ /g'`
+   echo "Using comma delimited user input, if valid."
+   echo " -----"
+
+  # CREATE DIRECTORY IF IT DOESN'T EXIST (AND CLEAN IT)
+   mkdir -p $outfile/$timestamp
+   rm -rf $outfile/$timestamp/*
+
+   # MAIN LOOP
+   for account in ${accounts[@]}; do
+      echo "| $account |"
+      echo " -----"
+      for region in `aws --profile pu-${account} ec2 describe-regions --query 'Regions[*].{Region:RegionName}' --output text`; do
+         aws ec2 --profile pu-${account} --region $region describe-instances --filters 'Name=instance-state-name,Values=running' --query 'Reservations[*].Instances[*].{Account:`'$account'`,Region:`'$region'`,InstType:InstanceType,InstId:InstanceId,AZ:Placement.AvailabilityZone,Name:Tags[?Key==`Name`]|[0].Value,Spot:InstanceLifecycle,State:State.Name,Platform:Platform}' --output text >> $outfile$timestamp/report.txt
+      done
+   done
+   echo "File saved to $outfile$timestamp/report.txt"
+   # END OF FUNCTION
+
+   exit 1;
+fi
+
+# WORKING TEST BLOCK
+if [[ $1 == 'test' ]]; then
+   echo "Test input"
+   echo "----------"
+   # TEST FUNCTION FOLLOWS
+   mytest="using,default,string"
+   if [[ -z $2 ]]; then
+      echo "Using default string"
+   else mytest=$2
+   fi
+   # Substitute commas for spaces
+   mytest=`echo "$mytest" | sed -r 's/,/ /g'`
+   echo "String: $mytest"
+
+   # Statements / Loops
+   for i in $mytest; do
+     echo $i
+     echo "----"
+     out="aws --profile pu-$i ec2 describe-regions --query 'Regions[*].{Region:RegionName}' --output text"
+     eval $out
+   done
+    fi
+   # END OF TEST FUNCTION
+   exit 1;
+fi
