@@ -72,6 +72,47 @@ if [[ $1 == 'instances' ]]; then
    exit 1;
 fi
 
+# TAG REPORT
+if [[ $1 == 'tag' ]]; then
+   if [[ -z $2 ]]; then
+      echo "No customer tag detected"
+      exit 1; # Will replace with default value, or "all" going forwards"
+   fi
+   echo "Gather list of tagged instances"
+   echo "-------------------------------"
+   # USE DEFAULT UNLESS USER INPUT IS DETECTED
+   accounts="cor,pop,dxm,hos,sea,wco,dxd,dqm,dqd"
+   if [[ -z $3 ]]; then
+      echo "Using default account set (cor,pop,dxm,hos,sea,wco,dxd,dqm,dqd)"
+   else accounts=$3
+   fi
+
+   # SUBSTITUTE COMMAS FOR SPACES TO USE IN LOOP
+   accounts=`echo "$accounts" | sed -r 's/,/ /g'`
+   echo "Using comma delimited user input, if valid."
+   echo " -----"
+
+  # CREATE DIRECTORY IF IT DOESN'T EXIST (AND CLEAN IT)
+   mkdir -p $outfile/$timestamp
+   rm -rf $outfile/$timestamp/*
+
+   # MAIN LOOP
+   for account in ${accounts[@]}; do
+      echo "| $account |"
+      echo " -----"
+      for region in `aws --profile pu-${account} ec2 describe-regions --query 'Regions[*].{Region:RegionName}' --output text`; do
+         aws ec2 --profile pu-${account} --region $region describe-instances --filters 'Name=tag:customer,Values=*'$2'*' --query 'Reservations[*].Instances[*].{Account:`'$account'`,Region:`'$region'`,InstType:InstanceType,InstId:InstanceId,AZ:Placement.AvailabilityZone,Name:Tags[?Key==`Name`]|[0].Value,Spot:InstanceLifecycle,State:State.Name,Platform:Platform}' --output text >> $outfile$timestamp/report.txt
+      done
+   done
+   echo "File saved to $outfile$timestamp/report.txt"
+   # END OF FUNCTION
+
+   exit 1;
+fi
+
+
+### aws ec2 describe-instances --profile pu-dxm --region us-east-1 --query 'Reservations[*].Instances[*].Tags[?Key==`Name`].Value' --filters 'Name=tag:Name,Values=*crownpeak*' | grep us
+
 # WORKING TEST BLOCK
 if [[ $1 == 'test' ]]; then
    echo "Test input"

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # VARS #
-version=1.2
-modified="11/April/2021"
+version=1.3
+modified="03/September/2021"
 
 # NULL INPUT CAPTURE #
 if [[ -z $1 ]]; then
@@ -54,7 +54,7 @@ if [[ $1 == 'jam' ]]; then
     echo "Using key: $key"
     exit 1;
   fi
-  if [[ $2 =~ ^[c|m|u][0-9]{1,2}$ ]]; then
+  if [[ $2 =~ ^[c|m|u][db]{0,2}[0-9]{1,2}$ ]]; then
     echo "valid server $2 - attempting connection."
     ssh -i /auth/keys/$key root@$2.jam.maguscloud.com
   else
